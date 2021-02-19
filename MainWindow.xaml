@@ -1,0 +1,30 @@
+﻿<Window x:Class="SpreadsheetsToMysql.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SpreadsheetsToMysql"
+        mc:Ignorable="d"
+        Title="Spreadsheets to MySQL" Height="450" Width="800" Background="#FFEBEBEB" WindowStartupLocation="CenterScreen">
+    <Grid Margin="10,0,3.6,0" HorizontalAlignment="Left">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="86*"/>
+            <RowDefinition Height="19*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="61*"/>
+            <ColumnDefinition Width="13*"/>
+            <ColumnDefinition Width="69*"/>
+        </Grid.ColumnDefinitions>
+        <Label Content="MySQL:" HorizontalAlignment="Left" Margin="69,125,0,0" VerticalAlignment="Top" Width="111" FontFamily="Consolas" FontWeight="Bold" FontSize="18" Foreground="#FF569CD6"/>
+        <Label Content="Status access-file" HorizontalAlignment="Left" Margin="69,160,0,0" VerticalAlignment="Top" Width="575" FontFamily="Consolas" FontSize="18" Grid.ColumnSpan="3"/>
+        <Label Content="Google Spreadsheets:" HorizontalAlignment="Left" Margin="69,31,0,0" VerticalAlignment="Top" Width="612" FontFamily="Consolas" FontWeight="Bold" FontSize="18" Foreground="#FF569CD6" Grid.ColumnSpan="3"/>
+        <TextBox HorizontalAlignment="Left" Height="30" Margin="73,75,0,0" TextWrapping="Wrap" Text="Enter link" VerticalAlignment="Top" Width="642" FontFamily="Consolas" FontSize="18" VerticalContentAlignment="Center" Grid.ColumnSpan="3"/>
+        <Button Name="TipSql" Content="?" ToolTip="Create file accessSQL.txt containing sql-query to connect to your MySQL" HorizontalAlignment="Left" Margin="17.936,159.384,0,0" VerticalAlignment="Top" Width="30" Height="30" FontFamily="Consolas" FontSize="14" FontWeight="Bold" Padding="0" UseLayoutRounding="False" Background="#3F9CDCFE" />
+        <Button Name="TipLink" Content="?" ToolTip="Rename the sheet for export as 'THIS' and copy the link from the browser." HorizontalAlignment="Left" Margin="17.936,75.568,0,0" VerticalAlignment="Top" Width="30" Height="30                 " FontFamily="Consolas" FontSize="14" FontWeight="Bold" Padding="0" UseLayoutRounding="False" Background="#3F9CDCFE"/>
+        <Button Content="Spreadsheets to MySQL" HorizontalAlignment="Left" Height="67" Margin="74,306,-0.8,0" VerticalAlignment="Top" Width="642" FontFamily="Consolas" FontSize="24" FontWeight="Bold" Background="#FF9CDCFE" Grid.ColumnSpan="3" Grid.RowSpan="2"/>
+        <Label Content="Process status:" HorizontalAlignment="Left" Margin="69,206,0,0" VerticalAlignment="Top" Width="175" FontFamily="Consolas" FontWeight="Bold" FontSize="18" Foreground="#FF569CD6"/>
+        <Label Content="Not connected to MySQL" HorizontalAlignment="Left" Margin="69,241,0,0" VerticalAlignment="Top" Width="575" FontFamily="Consolas" FontSize="18" Grid.ColumnSpan="3"/>
+
+    </Grid>
+</Window>
