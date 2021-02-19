@@ -22,9 +22,9 @@
         <TextBox HorizontalAlignment="Left" Height="30" Margin="73,75,0,0" TextWrapping="Wrap" Text="Enter link" VerticalAlignment="Top" Width="642" FontFamily="Consolas" FontSize="18" VerticalContentAlignment="Center" Grid.ColumnSpan="3"/>
         <Button Name="TipSql" Content="?" ToolTip="Create file accessSQL.txt containing sql-query to connect to your MySQL" HorizontalAlignment="Left" Margin="17.936,159.384,0,0" VerticalAlignment="Top" Width="30" Height="30" FontFamily="Consolas" FontSize="14" FontWeight="Bold" Padding="0" UseLayoutRounding="False" Background="#3F9CDCFE" />
         <Button Name="TipLink" Content="?" ToolTip="Rename the sheet for export as 'THIS' and copy the link from the browser." HorizontalAlignment="Left" Margin="17.936,75.568,0,0" VerticalAlignment="Top" Width="30" Height="30                 " FontFamily="Consolas" FontSize="14" FontWeight="Bold" Padding="0" UseLayoutRounding="False" Background="#3F9CDCFE"/>
-        <Button Content="Spreadsheets to MySQL" HorizontalAlignment="Left" Height="67" Margin="74,306,-0.8,0" VerticalAlignment="Top" Width="642" FontFamily="Consolas" FontSize="24" FontWeight="Bold" Background="#FF9CDCFE" Grid.ColumnSpan="3" Grid.RowSpan="2"/>
+        <Button Content="Spreadsheets to MySQL" HorizontalAlignment="Left" Height="67" Margin="73,322,0,0" VerticalAlignment="Top" Width="641" FontFamily="Consolas" FontSize="24" FontWeight="Bold" Background="#FF9CDCFE" Grid.ColumnSpan="3" Grid.RowSpan="2"/>
         <Label Content="Process status:" HorizontalAlignment="Left" Margin="69,206,0,0" VerticalAlignment="Top" Width="175" FontFamily="Consolas" FontWeight="Bold" FontSize="18" Foreground="#FF569CD6"/>
-        <Label Content="Not connected to MySQL" HorizontalAlignment="Left" Margin="69,241,0,0" VerticalAlignment="Top" Width="575" FontFamily="Consolas" FontSize="18" Grid.ColumnSpan="3"/>
+        <Label Content="Not connected to MySQL&#xD;&#xA;Not started." HorizontalAlignment="Left" Margin="69,241,0,0" VerticalAlignment="Top" Width="575" FontFamily="Consolas" FontSize="18" Grid.ColumnSpan="3" Height="65"/>
 
     </Grid>
 </Window>
