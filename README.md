@@ -10,13 +10,13 @@ WPF application to export from Google Spreadsheets to MySQL.
 
 ## Reason for creation
 
-The client base of the photo agency is stored in XXGoogle Spreadsheets. The task is to transfer to MySQL DB. Part of the data needs to be encrypted.
+The client base of the photo agency is stored in Google Spreadsheets. The task is to transfer to MySQL DB. Part of the data needs to be encrypted.
 
 ## What I will learn
 
--Google Sheets API
--WPF
--AES Encryption/Decryption
+- Google Sheets API v.4
+- WPF
+- AES Encryption/Decryption
 
 ## Study way
 
