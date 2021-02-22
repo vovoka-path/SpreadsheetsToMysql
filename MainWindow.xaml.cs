@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
+using System.Data;
 //using SpreadsheetsToMysql.CreateGoogleSheetsAPIservice;
 
 namespace SpreadsheetsToMysql
@@ -25,7 +26,7 @@ namespace SpreadsheetsToMysql
     public partial class MainWindow : Window
     {
         //ublic static MainWindow form1; // переменная, которая будет содержать ссылку на форму MainWindow
-        internal DB db = new DB();
+        //internal DB db = new DB();
         private string myConnectionString;
         //DB Db { get => db; set => db = value; }
 
@@ -64,13 +65,22 @@ namespace SpreadsheetsToMysql
 
         private void Button_ConnectMySQL_Click(object sender, RoutedEventArgs e) // del
         {
+            //-----------------------------------------
+            //myConnectionString = SqlStringFromFile(path);
+            
+
+            DataTable table = SheetToSQL.CreateTable(myConnectionString);
+
+            sqlStatus.Text = $"{table} = {table.Columns}";
+
+
             // ----------------------------------------
-            byte[] key = AesCrypt.GetAesIV(); // need check on ""
+            /*byte[] key = AesCrypt.GetAesIV(); // need check on ""
 
             Encoding utf8 = Encoding.GetEncoding("windows-1251");
 
             string qq = utf8.GetString(key);
-            sqlStatus.Text = $"{qq} = {qq.Length}";
+            sqlStatus.Text = $"{qq} = {qq.Length}";*/
 
             // ----------------------------------------
             /* if (File.Exists("credentials.json"))
@@ -94,9 +104,9 @@ namespace SpreadsheetsToMysql
 
         private void Button_SpreadsheetstoMySQL_Click(object sender, RoutedEventArgs e) // click to transfer
         {
-            db.CloseConnection();
+            //db.CloseConnection();
 
-            processStatus.Text = $@"Connection to mySQL: {db.myConnect.State}";
+            //processStatus.Text = $@"Connection to mySQL: {db.myConnect.State}";
         }
 
         private string SqlStringFromFile(string path) // get string from file
