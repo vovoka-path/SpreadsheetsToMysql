@@ -10,7 +10,7 @@ namespace SpreadsheetsToMysql
     {
         public MySqlConnection myConnect = new MySqlConnection();
 
-        public  void OpenConnection(string myConnectionString)
+        public void OpenConnection(string myConnectionString)
         {
             MainWindow mainForm = new MainWindow();
             mainForm.processStatus.Text = $@"Connection to mySQL: processing now";

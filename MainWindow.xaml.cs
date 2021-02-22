@@ -64,15 +64,26 @@ namespace SpreadsheetsToMysql
 
         private void Button_ConnectMySQL_Click(object sender, RoutedEventArgs e) // del
         {
-            if (File.Exists("credentials.json"))
-            {
-                var service = CreateGoogleSheetsAPIservice.GetService();
-                processStatus.Text = $@"var service : {service}";
-            }
-            else
-            {
-                processStatus.Text = $@"File credentials.json not found!";
-            }
+            // ----------------------------------------
+            byte[] key = AesCrypt.GetAesIV(); // need check on ""
+
+            Encoding utf8 = Encoding.GetEncoding("windows-1251");
+
+            string qq = utf8.GetString(key);
+            sqlStatus.Text = $"{qq} = {qq.Length}";
+
+            // ----------------------------------------
+            /* if (File.Exists("credentials.json"))
+             {
+                 var service = CreateGoogleSheetsAPIservice.GetService();
+                 processStatus.Text = $@"var service : {service}";
+             }
+             else
+             {
+                 processStatus.Text = $@"File credentials.json not found!";
+             }*/
+
+            // ---------------------------------------
             /*ConnecttoMySQL.Content = "Connection now";
             processStatus.Text = $@"Connection to mySQL: processing now";
 

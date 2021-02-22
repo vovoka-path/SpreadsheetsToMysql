@@ -1,16 +1,9 @@
 ﻿using Google.Apis.Auth.OAuth2;
 using Google.Apis.Sheets.v4;
-using Google.Apis.Sheets.v4.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using IdentityServer3.Core.Resources;
 using UserCredential = Google.Apis.Auth.OAuth2.UserCredential;
 using System.Threading;
 
@@ -38,8 +31,6 @@ namespace SpreadsheetsToMysql
                     "user",
                     CancellationToken.None,
                     new FileDataStore(credPath, true)).Result;
-                Console.WriteLine("\nSTART:\n");
-                Console.WriteLine("Credential file saved to: " + Path.Combine(Environment.CurrentDirectory, credPath));
             }
 
             // Create Google Sheets API service.
