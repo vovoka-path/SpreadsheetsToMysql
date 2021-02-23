@@ -66,12 +66,16 @@ namespace SpreadsheetsToMysql
         private void Button_ConnectMySQL_Click(object sender, RoutedEventArgs e) // del
         {
             //-----------------------------------------
+            string spreadsheetId = "1-Wx7IoOCkWj051EaCAV44j4d_Ibl5usYUO8d9iL2Z80";
+            IList<IList<Object>> values = GoogleSheetsAPI.GetSheet(spreadsheetId);
+            sqlStatus.Text = $"values.Count (обнаружено кол-во строк для экспорта) =  + {values.Count}";
+            //-----------------------------------------
             //myConnectionString = SqlStringFromFile(path);
-            
 
-            DataTable table = SheetToSQL.CreateTable(myConnectionString);
 
-            sqlStatus.Text = $"{table} = {table.Columns}";
+            /*DataTable table = SheetToSQL.CreateTable(myConnectionString);
+
+            sqlStatus.Text = $"{table} = {table.Columns}";*/
 
 
             // ----------------------------------------

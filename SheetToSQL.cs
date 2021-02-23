@@ -12,9 +12,9 @@ namespace SpreadsheetsToMysql
     {
         private void Main()
         {
-        
-
+            // empty
         }
+
         public static DataTable CreateTable(string myConnectionString) // get new empty structured DB
         {
             DB db = new DB();
@@ -71,5 +71,7 @@ namespace SpreadsheetsToMysql
 
             return table; // empty DB
         }
+
+
     }
 }

@@ -6,10 +6,12 @@ using System;
 using System.IO;
 using UserCredential = Google.Apis.Auth.OAuth2.UserCredential;
 using System.Threading;
+using System.Collections.Generic;
+using Google.Apis.Sheets.v4.Data;
 
 namespace SpreadsheetsToMysql
 {
-    public class CreateGoogleSheetsAPIservice
+    public class GoogleSheetsAPI
     {
         static string[] Scopes = { SheetsService.Scope.SpreadsheetsReadonly };
         static string ApplicationName = "Google Sheets API .NET Quickstart";
@@ -41,6 +43,23 @@ namespace SpreadsheetsToMysql
             });
                 
             return service;
+        }
+
+        public static IList<IList<Object>> GetSheet(string spreadsheetId)
+        {
+            string nameSheet = "final"; // default
+            string range = "!A2:P500"; // default
+            
+            SheetsService service = GetService();
+            
+            SpreadsheetsResource.ValuesResource.GetRequest request = 
+                service.Spreadsheets.Values.Get(spreadsheetId, nameSheet + range);
+
+            ValueRange response = request.Execute();
+
+            IList<IList<Object>> values = response.Values;
+
+            return values;
         }
     }
 }

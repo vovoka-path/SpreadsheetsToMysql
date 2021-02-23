@@ -179,7 +179,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CreateGoogleSheetsAPIservice.cs" />
+    <Compile Include="GoogleSheetsAPI.cs" />
     <Compile Include="DB.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
