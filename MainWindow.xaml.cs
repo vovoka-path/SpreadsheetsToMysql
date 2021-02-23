@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using System.Data;
+//using SpreadsheetsToMysql.SheetToSQL;
 //using SpreadsheetsToMysql.CreateGoogleSheetsAPIservice;
 
 namespace SpreadsheetsToMysql
@@ -27,17 +28,18 @@ namespace SpreadsheetsToMysql
     {
         //ublic static MainWindow form1; // переменная, которая будет содержать ссылку на форму MainWindow
         //internal DB db = new DB();
-        private string myConnectionString;
+
         //DB Db { get => db; set => db = value; }
+        //private static string myConnectionString;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            string path = @"accessSQL.txt";
+            //string path = @"accessSQL.txt";
 
-            myConnectionString = SqlStringFromFile(path);
-            CheckConnectionString(myConnectionString);
+            //myConnectionString = SqlStringFromFile(path);
+            //CheckConnectionString(myConnectionString);
 
             // --------- in worked --------
             /*private ValuesFromSheet(string nameSheet, string range)
@@ -68,7 +70,13 @@ namespace SpreadsheetsToMysql
             //-----------------------------------------
             string spreadsheetId = "1-Wx7IoOCkWj051EaCAV44j4d_Ibl5usYUO8d9iL2Z80";
             IList<IList<Object>> values = GoogleSheetsAPI.GetSheet(spreadsheetId);
+
             sqlStatus.Text = $"values.Count (обнаружено кол-во строк для экспорта) =  + {values.Count}";
+
+            DataTable tableSQL = SheetToSQL.ValuesToTable(values);
+
+            SheetToSQL.Write(tableSQL);
+            processStatus.Text = $@"tableSQL.Row[0] : {tableSQL.Rows[125][12]};  {tableSQL.Rows[125][13]}; {tableSQL.Rows[125][2]}; {tableSQL.Rows[125][3]};";
             //-----------------------------------------
             //myConnectionString = SqlStringFromFile(path);
 
@@ -113,40 +121,6 @@ namespace SpreadsheetsToMysql
             //processStatus.Text = $@"Connection to mySQL: {db.myConnect.State}";
         }
 
-        private string SqlStringFromFile(string path) // get string from file
-        {
-            string myConnectionString;
-
-            if (!File.Exists(path))
-            {
-                myConnectionString = "Username=fJuQo6tTlF;Database=fJuQo6tTlF;Password=vpI95KC9UA;Server=remotemysql.com";
-                sqlStatus.Text = "File accessSQL.txt not found!";
-            }
-            else
-            {
-                string[] readAccessSQL = File.ReadAllLines(path);
-                myConnectionString = readAccessSQL[0];
-
-                if (!(myConnectionString == ""))
-                    sqlStatus.Text = "File accessSQL.txt found.";
-                else
-                    sqlStatus.Text = "File accessSQL.txt found but empty!"; // not correct
-            }
-
-            return myConnectionString;
-        }
-
-        private void CheckConnectionString(string connectionString) // check string
-        {
-            if (connectionString.Contains("server=") 
-                & connectionString.Contains("username=")
-                & connectionString.Contains("password=")
-                & connectionString.Contains("database="))
-            {
-                processStatus.Text = $"File accessSQL.txt is OK.";
-            }
-            else
-                processStatus.Text = $"File accessSQL.txt requires conversion to the correct format!";
-        }
+        
     }
 }
