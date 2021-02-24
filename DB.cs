@@ -10,15 +10,16 @@ namespace SpreadsheetsToMysql
     class DB
     {
         public static MySqlConnection myConnect = new MySqlConnection();
+        public static string accessConnectionString;
 
-        public void OpenConnection(string myConnectionString)
+
+        public void OpenConnection()
         {
-            MainWindow mainForm = new MainWindow();
-            mainForm.processStatus.Text = $@"Connection to mySQL: processing now";
+            accessConnectionString = AccessStringFromFile();
 
             if (myConnect.State == System.Data.ConnectionState.Closed)
             {
-                myConnect.ConnectionString = myConnectionString;
+                myConnect.ConnectionString = accessConnectionString;
 
                 try
                 {
@@ -31,52 +32,61 @@ namespace SpreadsheetsToMysql
             }
         }
         
+
         public void CloseConnection()
         {
             if (myConnect.State == System.Data.ConnectionState.Open)
                 myConnect.Close();
         }
 
-        /*public static void Write(DataTable tableSQL)
+
+        public static string AccessStringFromFile()
         {
-            
-            MySqlDataAdapter adapter = new MySqlDataAdapter();
-            DataSet ds = new DataSet();
-            DataTable table = new DataTable();
-            string sql = $"SELECT * FROM `{SheetToSQL.newtableSQL}`";
-            MySqlCommand command = new MySqlCommand(sql);
-            command.Connection = myConnect; // Set connection for command.
-            command.ExecuteNonQuery(); // execute SQL request: create table SQL
+            string path = @"accessSQL.txt"; // parameter in
 
-            // Get names column from new table SQL
-            command.CommandText = sql;
-            adapter.SelectCommand = command;
-            //command.ExecuteNonQuery(); // execute SQL request
-            adapter.Fill(ds);
-            adapter.Fill(table);
-            MySqlCommandBuilder builder = new MySqlCommandBuilder(adapter);
+            if (!File.Exists(path))
+            {
+                MessageBox.Show("accessSQL.txt File in the application folder was not found! " +
+                    "File must contain sql connection string to your mySQL Databaase. " +
+                    "Required format: Username=<yourusername>;Database=<yournamebase>;Password=<yourpassword>;Server=<yourserver>");
+            }
+            else
+            {
+                string[] readAccessSQL = File.ReadAllLines(path);
 
-            adapter.Update(tableSQL); // write all changes to mySQL
+                accessConnectionString = readAccessSQL[0];
 
-            //-----------
-            MySqlCommand command = new MySqlCommand(sql); // Create a Command
+                if (accessConnectionString == "")
+                {
+                    MessageBox.Show("File accessSQL.txt was found but empty!");
+                }
+                else
+                {
+                    CheckConnectionString(accessConnectionString);
+                }
+            }
 
-            command.Connection = DB.myConnect; // Set connection for command.
-            command.ExecuteNonQuery(); // execute SQL request: create table SQL
+            return accessConnectionString;
+        }
 
-            MySqlDataAdapter adapter = new MySqlDataAdapter();
-            DataSet ds = new DataSet();
-            DataTable table = new DataTable();
 
-            // Get names column from new table SQL
-            sql = $"SELECT * FROM `{newtableSQL}`";
-            command.CommandText = sql;
-            adapter.SelectCommand = command;
-            //command.ExecuteNonQuery(); // execute SQL request
-            adapter.Fill(ds);
-            adapter.Fill(tableSQL);
+        public static void CheckConnectionString(string myConnectionString)
+        {
+            if (myConnectionString.Contains("server=")
+                & myConnectionString.Contains("username=")
+                & myConnectionString.Contains("password=")
+                & myConnectionString.Contains("database="))
+            {
+                MainWindow mainForm = new MainWindow();
 
-            db.CloseConnection();
-        }*/
+                mainForm.processStatus.Text = $"File accessSQL.txt is OK.";
+            }
+            else
+            {
+                MessageBox.Show("File accessSQL.txt found but contains wrong format sql connection string. " +
+                        "Correct format: Username=<yourusername>;Database=<yournamebase>;Password=<yourpassword>;Server=<yourserver>");
+            }
+        }
+
     }
 }

@@ -7,36 +7,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
+using static SpreadsheetsToMysql.DB;
 
 namespace SpreadsheetsToMysql
 {
     class SheetToSQL
     {
-        //private static string myConnectionString;
-
-        static MainWindow mainForm = new MainWindow();
-
         public static string newtableSQL = "customers10";
 
-        private void Main()
-        {
-            /*string path = @"accessSQL.txt";
 
-            myConnectionString = SqlStringFromFile(path);
-            CheckConnectionString(myConnectionString);*/
-            //password = "password";
-        }
-
-        public static DataTable CreateTable(string myConnectionString) // get new empty structured DB
+        public static DataTable CreateTable(string createTableString) // get new empty structured sqlTable
         {
             DB db = new DB();
-            db.OpenConnection(myConnectionString);
+            db.OpenConnection();
 
             //MySqlCommand command = new MySqlCommand("SELECT * FROM `clients`"); // Create a Command
 
             // sql = $"DROP TABLE {newtableSQL}";
             //command.ExecuteNonQuery(); // execute SQL request: delete table SQL
-
             
             string sql = $@"CREATE TABLE `{newtableSQL}` (
                              `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -71,7 +59,7 @@ namespace SpreadsheetsToMysql
 
             MySqlDataAdapter adapter = new MySqlDataAdapter();
             DataSet ds = new DataSet();
-            DataTable tableSQL = new DataTable();
+            DataTable emptyTable = new DataTable();
 
             // Get names column from new table SQL
             sql = $"SELECT * FROM `{newtableSQL}`";
@@ -79,15 +67,21 @@ namespace SpreadsheetsToMysql
             adapter.SelectCommand = command;
             //command.ExecuteNonQuery(); // execute SQL request
             adapter.Fill(ds);
-            adapter.Fill(tableSQL);
+            adapter.Fill(emptyTable);
 
             db.CloseConnection();
 
-            return tableSQL; // empty DB
+            return emptyTable; // empty DB
         }
 
         public static DataTable ValuesToTable(IList<IList<Object>> values)
         {
+            // Get and checking myConnectionString
+            string myConnectionString = DB.AccessStringFromFile();
+
+            DataTable tableSQL = CreateTable(myConnectionString);
+            DataRow rowSQL;
+
             string password = "password";
             byte[] aesKey = AesCrypt.GetAesKey(password);
             byte[] aesIV = AesCrypt.GetAesIV();
@@ -95,22 +89,17 @@ namespace SpreadsheetsToMysql
             string day = "";
             string month = "";
             string year = "";
-
             string insta = "";
             string phone = "";
             string requestDate = "";
+            int amountRow = 0;
 
-            int amountRow = 0; // check complete data transfer
 
-            string myConnectionString = SqlStringFromFile();
-            CheckConnectionString(myConnectionString);
-
-            DataTable tableSQL = CreateTable(myConnectionString);
-            DataRow rowSQL;
-
-            foreach (var rowSheet in values) // tableSheet -> tableSQL
+            foreach (var rowSheet in values) // rowSheet -> rowSQL
             {
-                rowSQL = tableSQL.NewRow();
+                rowSQL = tableSQL.NewRow(); // add empty row to fill
+
+                // - Get cells as is -
 
                 rowSQL["status"] = $"{rowSheet[0]}"; // column 
                 rowSQL["photographer"] = rowSheet[1].ToString().ToUpper(); // column 1
@@ -121,65 +110,67 @@ namespace SpreadsheetsToMysql
                 rowSQL["year"] = rowSheet[12]; // column 12
                 rowSQL["month"] = rowSheet[13]; // column 13
                 rowSQL["city"] = rowSheet[15]; // column 15
-                //aesIVHEXstr = Convert.ToBase64String(aesIV);
-                rowSQL["vector"] = aesIV; // byte[] -> hex aesIV for store in SQL
 
-                // - Get value only if exists:
+                // - Get and change cells only if exists -
 
-                // formatting to YYYY-MM-DD
+                // column 4: Formatting [shoot_date] to YYYY-MM-DD (use column 4, 12, 13)
                 if ((string)rowSheet[4] != "")
                 {
                     day = String.Format("{0:d2}", Convert.ToInt32(rowSheet[4].ToString()));
                     month = String.Format("{0:d2}", Convert.ToInt32(rowSheet[13].ToString()));
                     year = $"{rowSheet[12]}";
 
-                    rowSQL["shoot_date"] = $"{year}-{month}-{day}"; // column 4
+                    rowSQL["shoot_date"] = $"{year}-{month}-{day}";
                 }
 
-                // Encrypt email
+                // column 6: Encrypt [email]
                 if ($"{rowSheet[6]}" != "")
-                    rowSQL["email"] = AesCrypt.EncryptStringToBytes_Aes($"{rowSheet[6]}", aesKey, aesIV); // column 6
+                    rowSQL["email"] = AesCrypt.EncryptStringToBytes_Aes($"{rowSheet[6]}", aesKey, aesIV); 
 
-                // formatting and Encrypt PHONE number
+                // column 7: Formatting and encrypt [phone] number
                 if ((string)rowSheet[7] != "")
                 {
                     phone = "+" + String.Format("{0:+###########}", rowSheet[7]).Replace("+", "").Replace("-", "").Replace("(", "").Replace(")", "").Replace(" ", "");
 
                     if (phone.IndexOf("8") == 1)
                     {
-                        phone = phone.Remove(1, 1).Insert(1, "7"); // самая быстрая ~ 500-550 mcs
+                        phone = phone.Remove(1, 1).Insert(1, "7"); // the fastest ~ 500-550 mcs
                     }
 
-                    rowSQL["phone"] = AesCrypt.EncryptStringToBytes_Aes(phone, aesKey, aesIV); // column 7
+                    rowSQL["phone"] = AesCrypt.EncryptStringToBytes_Aes(phone, aesKey, aesIV);
                 }
 
-                // encrypt message
+                // column 8: Encrypt [message]
                 if ($"{rowSheet[8]}" != "")
-                    rowSQL["message"] = AesCrypt.EncryptStringToBytes_Aes($"{rowSheet[8]}", aesKey, aesIV); // column 8
+                    rowSQL["message"] = AesCrypt.EncryptStringToBytes_Aes($"{rowSheet[8]}", aesKey, aesIV);
 
-                // check request_date
+                // column 9: Check [request_date]
                 requestDate = $"{rowSheet[9]}";
 
-                if (requestDate != "" & requestDate.IndexOf("2") == 0) // only 20YY.MM.DD
-                    rowSQL["request_date"] = rowSheet[9]; // column 9
+                if (requestDate != "" & requestDate.IndexOf("2") == 0) // and if Y<0>YY.MM.DD for exclude wrong data
+                    rowSQL["request_date"] = rowSheet[9];
 
-                // encrypt remark
+                //  column 10: Encrypt [remark]
                 if ($"{(string)rowSheet[10]}" != "")
-                    rowSQL["remark"] = AesCrypt.EncryptStringToBytes_Aes($"{rowSheet[10]}", aesKey, aesIV); // column 10
+                    rowSQL["remark"] = AesCrypt.EncryptStringToBytes_Aes($"{rowSheet[10]}", aesKey, aesIV);
 
-                // formatting and Encrypt Instagram
+                // column 14: Formatting and Encrypt [instagram]
                 if ((string)rowSheet[14] != "")
                 {
-                    insta = String.Format("{0}", rowSheet[14]).Replace("https://www.instagram.com/", "").Replace("https://instagram.com/", "").Replace("/", "").Replace("@", "");
+                    // Getting only the login
+                    insta = String.Format("{0}", rowSheet[14]).Replace("https://www.instagram.com/", "").Replace("https://instagram.com/", "").Replace("/", ""); // del link
+                    insta = insta.Replace("@", ""); // del '@' if as username in instagram
 
-                    if (insta.IndexOf("?") > 1) // check exist "?utm" 
-                        insta = insta.Remove(insta.IndexOf("?")); // delete "?utm"
+                    if (insta.IndexOf("?") > 1) // '?utm...' exist? 
+                        insta = insta.Remove(insta.IndexOf("?")); // del "?utm"
 
-                    rowSQL["instagram"] = AesCrypt.EncryptStringToBytes_Aes(insta, aesKey, aesIV); // column 14
+                    rowSQL["instagram"] = AesCrypt.EncryptStringToBytes_Aes(insta, aesKey, aesIV);
                 }
 
-                tableSQL.Rows.Add(rowSQL); // add new row
-                amountRow++;
+                rowSQL["vector"] = aesIV;
+
+                tableSQL.Rows.Add(rowSQL); // add filled row to table
+                amountRow++; // for checking complete data transfer
             }
 
             return tableSQL;
@@ -188,17 +179,16 @@ namespace SpreadsheetsToMysql
         public static void Write(DataTable tableSQL)
         {
             DB db = new DB();
+            db.OpenConnection();
 
-            string myConnectionString = SqlStringFromFile();
-            CheckConnectionString(myConnectionString);
+            
 
-            db.OpenConnection(myConnectionString);
 
             string sql = $"SELECT * FROM `{newtableSQL}`";
             MySqlCommand command = new MySqlCommand(sql); // Create a Command
 
             command.Connection = DB.myConnect; // Set connection for command.
-            command.ExecuteNonQuery(); // execute SQL request: create table SQL
+            command.ExecuteNonQuery(); // Execute SQL request: create table SQL
 
             MySqlDataAdapter adapter = new MySqlDataAdapter();
             command.CommandText = sql;
@@ -210,48 +200,5 @@ namespace SpreadsheetsToMysql
 
             db.CloseConnection();
         }
-
-            private static string SqlStringFromFile() // get string from file
-        {
-            string path = @"accessSQL.txt"; // parameter in
-            string myConnectionString;
-
-            if (!File.Exists(path))
-            {
-                myConnectionString = "Username=fJuQo6tTlF;Database=fJuQo6tTlF;Password=vpI95KC9UA;Server=remotemysql.com";
-                
-                mainForm.sqlStatus.Text = "File accessSQL.txt not found!";
-            }
-            else
-            {
-                string[] readAccessSQL = File.ReadAllLines(path);
-                myConnectionString = readAccessSQL[0];
-
-                if (!(myConnectionString == ""))
-                    mainForm.sqlStatus.Text = "File accessSQL.txt found.";
-                else
-                    mainForm.sqlStatus.Text = "File accessSQL.txt found but empty!"; // not correct
-            }
-
-            return myConnectionString;
-        }
-
-        private static void CheckConnectionString(string connectionString) // check string
-        {
-            if (connectionString.Contains("server=")
-                & connectionString.Contains("username=")
-                & connectionString.Contains("password=")
-                & connectionString.Contains("database="))
-            {
-                mainForm.processStatus.Text = $"File accessSQL.txt is OK.";
-            }
-            else
-                mainForm.processStatus.Text = $"File accessSQL.txt requires conversion to the correct format!";
-        }
-
-        /*private static FormatDate(object day)
-        {
-           // ----
-        }*/
     }
 }
