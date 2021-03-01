@@ -9,6 +9,7 @@ namespace SpreadsheetsToMysql
 {
     class DB
     {
+
         public static MySqlConnection myConnect = new MySqlConnection();
         public static string accessConnectionString;
 
@@ -48,7 +49,8 @@ namespace SpreadsheetsToMysql
             {
                 MessageBox.Show("accessSQL.txt File in the application folder was not found! " +
                     "File must contain sql connection string to your mySQL Databaase. " +
-                    "Required format: Username=<yourusername>;Database=<yournamebase>;Password=<yourpassword>;Server=<yourserver>");
+                    "Required format: Username=<yourusername>;Database=<yournamebase>;" +
+                    "Password=<yourpassword>;Server=<yourserver>");
             }
             else
             {
@@ -83,8 +85,10 @@ namespace SpreadsheetsToMysql
             }
             else
             {
-                MessageBox.Show("File accessSQL.txt found but contains wrong format sql connection string. " +
-                        "Correct format: Username=<yourusername>;Database=<yournamebase>;Password=<yourpassword>;Server=<yourserver>");
+                MessageBox.Show("File accessSQL.txt found but contains " +
+                    "wrong format sql connection string. " +
+                    "Correct format: Username=<yourusername>;Database=<yournamebase>;" +
+                    "Password=<yourpassword>;Server=<yourserver>");
             }
         }
 
