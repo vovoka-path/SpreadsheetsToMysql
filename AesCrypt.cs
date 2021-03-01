@@ -7,33 +7,39 @@ namespace SpreadsheetsToMysql
 {
     class AesCrypt
     {
+
         public static byte[] GetAesKey(string password)
         {
-            int amountBytesForKey = 32;
+            int needBytesForKey = 32;
 
-            while (password.Length < amountBytesForKey)
+            // Construct a password with required length
+            // equal to 32 chars.
+            while (password.Length < needBytesForKey)
             {
                 password += password;
             }
 
-            password = password.Substring(0, amountBytesForKey);
+            password = password.Substring(0, needBytesForKey);
 
             byte[] aesKey = Encoding.GetEncoding("windows-1251").GetBytes(password);
 
             return aesKey;
         }
 
+
         public static byte[] GetAesIV()
         {
             byte[] aesIV;
 
+            // Generate aesIV (byte[]) for current session.
             using (Aes myAes = Aes.Create())
             {
-                aesIV = myAes.IV; // generate aesIV (byte[]) for session
+                aesIV = myAes.IV; 
             }
             
             return aesIV;
         }
+
 
         public static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key, byte[] IV)
         {
@@ -75,6 +81,7 @@ namespace SpreadsheetsToMysql
             return encrypted;
         }
 
+
         public static string DecryptStringFromBytes_Aes(byte[] cipherText, byte[] Key, byte[] IV)
         {
             // Check arguments.
@@ -106,10 +113,6 @@ namespace SpreadsheetsToMysql
                     {
                         using (StreamReader srDecrypt = new StreamReader(csDecrypt))
                         {
-
-                            // Read the decrypted bytes from the decrypting stream
-                            // and place them in a string.
-                            //csDecrypt.FlushFinalBlock();
                             plaintext = srDecrypt.ReadToEnd();
                         }
                     }
@@ -118,5 +121,7 @@ namespace SpreadsheetsToMysql
 
             return plaintext;
         }
+
+
     }
 }
