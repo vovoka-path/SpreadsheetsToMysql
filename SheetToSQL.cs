@@ -2,31 +2,24 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
-using static SpreadsheetsToMysql.DB;
+using System.Windows.Forms;
 
 namespace SpreadsheetsToMysql
 {
     class SheetToSQL
     {
-        public static string newtableSQL = "customers10";
+
+        public static string nameNewTable = "customers10";
+        public static int amountRow = 0;
 
 
-        public static DataTable CreateTable(string createTableString) // get new empty structured sqlTable
+        // Get new empty structured sqlTable.
+        public static DataTable CreateTable(string createTableString)
         {
             DB db = new DB();
             db.OpenConnection();
 
-            //MySqlCommand command = new MySqlCommand("SELECT * FROM `clients`"); // Create a Command
-
-            // sql = $"DROP TABLE {newtableSQL}";
-            //command.ExecuteNonQuery(); // execute SQL request: delete table SQL
-            
-            string sql = $@"CREATE TABLE `{newtableSQL}` (
+            string sql = $@"CREATE TABLE `{nameNewTable}` (
                              `id` int(11) NOT NULL AUTO_INCREMENT,
                              `request_date` date NOT NULL COMMENT 'Дата заявки',
                              `city` set('Прага','Рим','Венеция','Париж') NOT NULL COMMENT 'Город',
@@ -52,31 +45,42 @@ namespace SpreadsheetsToMysql
                              UNIQUE KEY `1` (`id`)
                             ) ENGINE=MyISAM AUTO_INCREMENT = 0 DEFAULT CHARSET = utf8";
 
-            MySqlCommand command = new MySqlCommand(sql); // Create a Command
+            MySqlCommand command = new MySqlCommand(sql); // Create a Command.
 
             command.Connection = DB.myConnect; // Set connection for command.
-            command.ExecuteNonQuery(); // execute SQL request: create table SQL
+
+            // Execute SQL request: create table SQL.
+            try
+            {
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+                Environment.Exit(0);
+            }
 
             MySqlDataAdapter adapter = new MySqlDataAdapter();
             DataSet ds = new DataSet();
             DataTable emptyTable = new DataTable();
 
-            // Get names column from new table SQL
-            sql = $"SELECT * FROM `{newtableSQL}`";
+            // Get names column from new table SQL.
+            sql = $"SELECT * FROM `{nameNewTable}`";
             command.CommandText = sql;
             adapter.SelectCommand = command;
-            //command.ExecuteNonQuery(); // execute SQL request
+            //command.ExecuteNonQuery(); // Execute SQL request.
             adapter.Fill(ds);
             adapter.Fill(emptyTable);
 
             db.CloseConnection();
 
-            return emptyTable; // empty DB
+            return emptyTable;
         }
+
 
         public static DataTable ValuesToTable(IList<IList<Object>> values)
         {
-            // Get and checking myConnectionString
+            // Get and checking myConnectionString.
             string myConnectionString = DB.AccessStringFromFile();
 
             DataTable tableSQL = CreateTable(myConnectionString);
@@ -92,28 +96,28 @@ namespace SpreadsheetsToMysql
             string insta = "";
             string phone = "";
             string requestDate = "";
-            int amountRow = 0;
 
-
-            foreach (var rowSheet in values) // rowSheet -> rowSQL
+            // rowSheet -> rowSQL
+            foreach (var rowSheet in values)
             {
-                rowSQL = tableSQL.NewRow(); // add empty row to fill
+                rowSQL = tableSQL.NewRow(); // Add new empty row.
 
-                // - Get cells as is -
+                // ** Get cells as is **
 
-                rowSQL["status"] = $"{rowSheet[0]}"; // column 
-                rowSQL["photographer"] = rowSheet[1].ToString().ToUpper(); // column 1
-                rowSQL["package1"] = rowSheet[2].ToString().ToUpper(); // column 2
-                rowSQL["package2"] = rowSheet[3].ToString().ToUpper(); // column 3
-                rowSQL["name_client"] = rowSheet[5]; // column 5
-                rowSQL["itinerary"] = rowSheet[11]; // column 11
-                rowSQL["year"] = rowSheet[12]; // column 12
-                rowSQL["month"] = rowSheet[13]; // column 13
-                rowSQL["city"] = rowSheet[15]; // column 15
+                rowSQL["status"] = $"{rowSheet[0]}"; // Column 0
+                rowSQL["photographer"] = rowSheet[1].ToString().ToUpper(); // Column 1
+                rowSQL["package1"] = rowSheet[2].ToString().ToUpper(); // Column 2
+                rowSQL["package2"] = rowSheet[3].ToString().ToUpper(); // Column 3
+                rowSQL["name_client"] = rowSheet[5]; // Column 5
+                rowSQL["itinerary"] = rowSheet[11]; // Column 11
+                rowSQL["year"] = rowSheet[12]; // Column 12
+                rowSQL["month"] = rowSheet[13]; // Column 13
+                rowSQL["city"] = rowSheet[15]; // Column 15
 
-                // - Get and change cells only if exists -
+                // ** Get and change cells only if exists **
 
-                // column 4: Formatting [shoot_date] to YYYY-MM-DD (use column 4, 12, 13)
+                // Column 4: Formatting [shoot_date] 
+                // to YYYY-MM-DD (use columns: 4, 12, 13).
                 if ((string)rowSheet[4] != "")
                 {
                     day = String.Format("{0:d2}", Convert.ToInt32(rowSheet[4].ToString()));
@@ -123,82 +127,88 @@ namespace SpreadsheetsToMysql
                     rowSQL["shoot_date"] = $"{year}-{month}-{day}";
                 }
 
-                // column 6: Encrypt [email]
+                // Column 6: Encrypt [email].
                 if ($"{rowSheet[6]}" != "")
                     rowSQL["email"] = AesCrypt.EncryptStringToBytes_Aes($"{rowSheet[6]}", aesKey, aesIV); 
 
-                // column 7: Formatting and encrypt [phone] number
+                // Column 7: Formatting and encrypt [phone] number.
                 if ((string)rowSheet[7] != "")
                 {
                     phone = "+" + String.Format("{0:+###########}", rowSheet[7]).Replace("+", "").Replace("-", "").Replace("(", "").Replace(")", "").Replace(" ", "");
 
                     if (phone.IndexOf("8") == 1)
                     {
-                        phone = phone.Remove(1, 1).Insert(1, "7"); // the fastest ~ 500-550 mcs
+                        phone = phone.Remove(1, 1).Insert(1, "7"); // The fastest way ~ 500-550 mcs.
                     }
 
                     rowSQL["phone"] = AesCrypt.EncryptStringToBytes_Aes(phone, aesKey, aesIV);
                 }
 
-                // column 8: Encrypt [message]
+                // Column 8: Encrypt [message].
                 if ($"{rowSheet[8]}" != "")
                     rowSQL["message"] = AesCrypt.EncryptStringToBytes_Aes($"{rowSheet[8]}", aesKey, aesIV);
 
-                // column 9: Check [request_date]
+                // Column 9: Check [request_date].
                 requestDate = $"{rowSheet[9]}";
 
-                if (requestDate != "" & requestDate.IndexOf("2") == 0) // and if Y<0>YY.MM.DD for exclude wrong data
+                if (requestDate != "" & requestDate.IndexOf("2") == 0) // If 'Y0YY.MM.DD'
                     rowSQL["request_date"] = rowSheet[9];
 
-                //  column 10: Encrypt [remark]
+                //  Column 10: Encrypt [remark].
                 if ($"{(string)rowSheet[10]}" != "")
                     rowSQL["remark"] = AesCrypt.EncryptStringToBytes_Aes($"{rowSheet[10]}", aesKey, aesIV);
 
-                // column 14: Formatting and Encrypt [instagram]
+                // Column 14: Formatting and Encrypt [instagram].
                 if ((string)rowSheet[14] != "")
                 {
-                    // Getting only the login
-                    insta = String.Format("{0}", rowSheet[14]).Replace("https://www.instagram.com/", "").Replace("https://instagram.com/", "").Replace("/", ""); // del link
-                    insta = insta.Replace("@", ""); // del '@' if as username in instagram
-
-                    if (insta.IndexOf("?") > 1) // '?utm...' exist? 
-                        insta = insta.Remove(insta.IndexOf("?")); // del "?utm"
+                    // Getting only the login:
+                    // - Delete link.
+                    insta = String.Format("{0}", rowSheet[14]).Replace("https://www.instagram.com/", "").Replace("https://instagram.com/", "").Replace("/", "");
+                    // - Delete '@' if as instagram username.
+                    insta = insta.Replace("@", "");
+                    // - Delete UTM tag if exist.
+                    if (insta.IndexOf("?") > 1) 
+                        insta = insta.Remove(insta.IndexOf("?"));
 
                     rowSQL["instagram"] = AesCrypt.EncryptStringToBytes_Aes(insta, aesKey, aesIV);
                 }
 
                 rowSQL["vector"] = aesIV;
+                
+                // Add filled new row to table.
+                tableSQL.Rows.Add(rowSQL);
 
-                tableSQL.Rows.Add(rowSQL); // add filled row to table
-                amountRow++; // for checking complete data transfer
+                // For checking data transfer.
+                amountRow++;
             }
 
             return tableSQL;
         }
+
 
         public static void Write(DataTable tableSQL)
         {
             DB db = new DB();
             db.OpenConnection();
 
-            
+            string sql = $"SELECT * FROM `{nameNewTable}`";
+            MySqlCommand command = new MySqlCommand(sql);
 
-
-            string sql = $"SELECT * FROM `{newtableSQL}`";
-            MySqlCommand command = new MySqlCommand(sql); // Create a Command
-
-            command.Connection = DB.myConnect; // Set connection for command.
-            command.ExecuteNonQuery(); // Execute SQL request: create table SQL
+            command.Connection = DB.myConnect;
+            command.ExecuteNonQuery();
 
             MySqlDataAdapter adapter = new MySqlDataAdapter();
+
             command.CommandText = sql;
             adapter.SelectCommand = command;
 
             MySqlCommandBuilder builder = new MySqlCommandBuilder(adapter);
 
-            adapter.Update(tableSQL); // write all changes to mySQL
+            // Write all changes to mySQL.
+            adapter.Update(tableSQL);
 
             db.CloseConnection();
         }
+
     }
 }

@@ -1,9 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
-using System.Data;
+using System;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-//using SpreadsheetsToMysql.MainWindow.xaml;
 
 namespace SpreadsheetsToMysql
 {
@@ -47,23 +45,25 @@ namespace SpreadsheetsToMysql
 
             if (!File.Exists(path))
             {
-                MessageBox.Show("accessSQL.txt File in the application folder was not found! " +
-                    "File must contain sql connection string to your mySQL Databaase. " +
+                MessageBox.Show("File accessSQL.txt in the application folder was not found! " +
+                    "File must contain sql connection string to your mySQL DB. " +
                     "Required format: Username=<yourusername>;Database=<yournamebase>;" +
                     "Password=<yourpassword>;Server=<yourserver>");
+                Environment.Exit(0);
+
             }
             else
             {
                 string[] readAccessSQL = File.ReadAllLines(path);
 
-                accessConnectionString = readAccessSQL[0];
-
-                if (accessConnectionString == "")
+                if (readAccessSQL.Length == 0)
                 {
                     MessageBox.Show("File accessSQL.txt was found but empty!");
+                    Environment.Exit(0);
                 }
                 else
                 {
+                    accessConnectionString = readAccessSQL[0];
                     CheckConnectionString(accessConnectionString);
                 }
             }
@@ -74,21 +74,16 @@ namespace SpreadsheetsToMysql
 
         public static void CheckConnectionString(string myConnectionString)
         {
-            if (myConnectionString.Contains("server=")
-                & myConnectionString.Contains("username=")
-                & myConnectionString.Contains("password=")
-                & myConnectionString.Contains("database="))
-            {
-                MainWindow mainForm = new MainWindow();
-
-                mainForm.processStatus.Text = $"File accessSQL.txt is OK.";
-            }
-            else
+            if (!myConnectionString.Contains("server=")
+                | !myConnectionString.Contains("username=")
+                | !myConnectionString.Contains("password=")
+                | !myConnectionString.Contains("database="))
             {
                 MessageBox.Show("File accessSQL.txt found but contains " +
                     "wrong format sql connection string. " +
                     "Correct format: Username=<yourusername>;Database=<yournamebase>;" +
                     "Password=<yourpassword>;Server=<yourserver>");
+                Environment.Exit(0);
             }
         }
 

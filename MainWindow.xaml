@@ -5,18 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpreadsheetsToMysql"
         mc:Ignorable="d"
-        Title="Spreadsheets to MySQL" Height="450" Width="800" Background="#FFEBEBEB" WindowStartupLocation="CenterScreen">
-    <Grid x:Name="LayoutRoot" Margin="10,0,3.6,0" HorizontalAlignment="Left">
-        <Label Content="MySQL:" HorizontalAlignment="Left" Margin="69,125,0,0" VerticalAlignment="Top" Width="111" FontFamily="Consolas" FontWeight="Bold" FontSize="18" Foreground="#FF569CD6"/>
-        <TextBlock x:Name="sqlStatus" TextWrapping="Wrap" Text="Status access-file" HorizontalAlignment="Left" Margin="84,160,0,0" VerticalAlignment="Top" Width="597" FontFamily="Consolas" FontSize="12" Height="46" />
-        <Label Content="Google Spreadsheets:" HorizontalAlignment="Left" Margin="69,31,0,0" VerticalAlignment="Top" Width="612" FontFamily="Consolas" FontWeight="Bold" FontSize="18" Foreground="#FF569CD6" Grid.ColumnSpan="3"/>
-        <TextBox HorizontalAlignment="Left" Height="30" Margin="73,75,0,0" TextWrapping="Wrap" Text="Enter link" VerticalAlignment="Top" Width="642" FontFamily="Consolas" FontSize="18" VerticalContentAlignment="Center" Grid.ColumnSpan="3"/>
-        <Button x:Name="TipSql" Content="?" ToolTip="Create file accessSQL.txt containing sql-query to connect to your MySQL" HorizontalAlignment="Left" Margin="17.936,131.708,0,0" VerticalAlignment="Top" Width="20" Height="20" FontFamily="Consolas" FontSize="14" FontWeight="Bold" Padding="0" UseLayoutRounding="False" Background="#3F9CDCFE" />
-        <Button x:Name="TipLink" Content="?" ToolTip="Rename the sheet for export as 'THIS' and copy the link from the browser." HorizontalAlignment="Left" Margin="17.936,37.828,0,0" VerticalAlignment="Top" Width="20" Height="20" FontFamily="Consolas" FontSize="14" FontWeight="Bold" Padding="0" UseLayoutRounding="False" Background="#3F9CDCFE"/>
-        <Button Content="Spreadsheets to MySQL" HorizontalAlignment="Left" Height="67" Margin="73,322,0,0" VerticalAlignment="Top" Width="641" FontFamily="Consolas" FontSize="24" FontWeight="Bold" Background="#FF9CDCFE" Grid.ColumnSpan="3" Grid.RowSpan="2" Click="Button_SpreadsheetstoMySQL_Click"/>
-        <Label Content="Process status:" HorizontalAlignment="Left" Margin="69,206,0,0" VerticalAlignment="Top" Width="175" FontFamily="Consolas" FontWeight="Bold" FontSize="18" Foreground="#FF569CD6"/>
-        <TextBlock x:Name="processStatus" TextWrapping="Wrap" Text="TextBlock" HorizontalAlignment="Left" Margin="84,241,-0.6,0" VerticalAlignment="Top" Width="631" Height="55" FontFamily="Consolas" FontSize="12" x:FieldModifier="internal" />
-        <Button x:Name="ConnecttoMySQL" Content="Connect to MySQL" HorizontalAlignment="Left" Height="23" Margin="226,129,0,0" VerticalAlignment="Top" Width="215" FontFamily="Consolas" FontSize="18" FontWeight="Bold" Background="#FF9CDCFE" Click="Button_ConnectMySQL_Click"/>
+        Title="Spreadsheets to MySQL" Height="363.11" Width="800" Background="#FFEBEBEB" WindowStartupLocation="CenterScreen">
+    <Grid x:Name="LayoutRoot" Margin="10,0,0,-0.4" HorizontalAlignment="Left" Width="780">
+        <Label Content="Link to Google spreadsheets:" HorizontalAlignment="Left" Margin="69,30,0,0" VerticalAlignment="Top" Width="612" FontFamily="Consolas" FontWeight="Bold" FontSize="18" Foreground="#FF569CD6"/>
+        <TextBox x:Name="Link" HorizontalAlignment="Left" Height="46" Margin="73,78,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="642" FontFamily="Consolas" VerticalContentAlignment="Center" FontSize="18"/>
+        <Button x:Name="TipLink" Content="?" ToolTip="Rename the required sheet as 'final'. File accessSQL.txt must be located in app folder and contains sql-query to connect to your MySQL." HorizontalAlignment="Left" Margin="692.43,36.88,0,0" VerticalAlignment="Top" Width="20" Height="20" FontFamily="Consolas" FontSize="14" FontWeight="Bold" Padding="0" UseLayoutRounding="False" Background="#3F9CDCFE" RenderTransformOrigin="0.398,0.481"/>
+        <Button Content="Transfer spreadsheet to mySQL" HorizontalAlignment="Left" Height="67" Margin="73,156,0,0" VerticalAlignment="Top" Width="642" FontFamily="Consolas" FontSize="24" FontWeight="Bold" Background="#FF9CDCFE" Click="Button_SpreadsheetstoMySQL_Click"/>
+        <TextBlock x:Name="processStatus" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="71,260,67,31" VerticalAlignment="Center" Width="642" Height="43" FontFamily="Consolas" FontSize="14" x:FieldModifier="internal" Foreground="#FF569CD6" Text=" &gt; Enter link and press button." LineHeight="24" LineStackingStrategy="BlockLineHeight" />
 
     </Grid>
 </Window>

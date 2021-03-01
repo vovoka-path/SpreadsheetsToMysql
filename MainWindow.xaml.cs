@@ -26,49 +26,56 @@ namespace SpreadsheetsToMysql
     /// </summary>
     public partial class MainWindow : Window
     {
-        //ublic static MainWindow form1; // переменная, которая будет содержать ссылку на форму MainWindow
-        //internal DB db = new DB();
-
-        //DB Db { get => db; set => db = value; }
-        //private static string myConnectionString;
 
         public MainWindow()
         {
             InitializeComponent();
-
-            //string path = @"accessSQL.txt";
-
-            //myConnectionString = SqlStringFromFile(path);
-            //CheckConnectionString(myConnectionString);
-
-            // --------- in worked --------
-            /*private ValuesFromSheet(string nameSheet, string range)
-            {
-                GetCredential.main() // get: var service
-
-                return IList < IList < Object >> values;
-            }
-
-            private DataTable Create(string sql)
-            {
-                DB db = new DB();
-                return DataTable table; // empty DB
-            }
-
-            private ValuesToTable(var values, DataTable table)
-            {
-                GetAesKeys();
-                DB.OpenConnection();
-                return DataTable table;
-            }*/
-
-
         }
 
+
+        // Click the big button to transfer.
+        private void Button_SpreadsheetstoMySQL_Click(object sender, RoutedEventArgs e)
+        {
+            // Get data from Google spreadsheet.
+            string spreadsheetId = GetIDfromLink(Link.Text);
+            IList<IList<Object>> values = GoogleSheetsAPI.GetSheet(spreadsheetId);
+
+            // Convert data for mySQL.
+            DataTable tableSQL = SheetToSQL.ValuesToTable(values);
+
+            // Write new table to mySQL DB.
+            SheetToSQL.Write(tableSQL);
+
+            processStatus.Text = 
+                $@"> Finished! {SheetToSQL.amountRow} rows transfered to table '{SheetToSQL.nameNewTable}' to your mySQL!";
+        }
+
+
+        private string GetIDfromLink(string link)
+        {
+            string[] words = link.Split(new char[] { '/' });
+            string id = "";
+
+            // Get ID in link after 5th '/'.
+            if (words.Length < 6)
+            {
+                MessageBox.Show("Enter the correct link to the spreadsheets!");
+            }
+            else
+            {
+                id = words[5];
+                // id like "1ctHfDIc_yYcT4BBUzTTGJDMM5WHWJh-lFij9cSJNcHg"
+            }
+
+            return id;
+        }
+
+       
+        // Debugging.
         private void Button_ConnectMySQL_Click(object sender, RoutedEventArgs e) // del
         {
             //-----------------------------------------
-            string spreadsheetId = "1-Wx7IoOCkWj051EaCAV44j4d_Ibl5usYUO8d9iL2Z80";
+            /*string spreadsheetId = "1-Wx7IoOCkWj051EaCAV44j4d_Ibl5usYUO8d9iL2Z80";
             IList<IList<Object>> values = GoogleSheetsAPI.GetSheet(spreadsheetId);
 
             sqlStatus.Text = $"values.Count (обнаружено кол-во строк для экспорта) =  + {values.Count}";
@@ -76,7 +83,7 @@ namespace SpreadsheetsToMysql
             DataTable tableSQL = SheetToSQL.ValuesToTable(values);
 
             SheetToSQL.Write(tableSQL);
-            processStatus.Text = $@"tableSQL.Row[0] : {tableSQL.Rows[125][12]};  {tableSQL.Rows[125][13]}; {tableSQL.Rows[125][2]}; {tableSQL.Rows[125][3]};";
+            processStatus.Text = $@"tableSQL.Row[0] : {tableSQL.Rows[125][12]};  {tableSQL.Rows[125][13]}; {tableSQL.Rows[125][2]}; {tableSQL.Rows[125][3]};";*/
             //-----------------------------------------
             //myConnectionString = SqlStringFromFile(path);
 
@@ -114,13 +121,5 @@ namespace SpreadsheetsToMysql
             processStatus.Text = $@"Connection to mySQL: {db.myConnect.State}";*/
         }
 
-        private void Button_SpreadsheetstoMySQL_Click(object sender, RoutedEventArgs e) // click to transfer
-        {
-            //db.CloseConnection();
-
-            //processStatus.Text = $@"Connection to mySQL: {db.myConnect.State}";
-        }
-
-        
     }
 }
