@@ -9,11 +9,11 @@ WPF application to export from Google Spreadsheets to MySQL.
 ## How to use
 
 1. Create a file 'accessSQL.txt' in the '/bin/debug' folder with an access string to your mySQL as:
-`server=<yourserver>;username=<yourusername>;password=<yourpassword>;database=<yournameDB>;CharSet=utf8;convert zero datetime=true;allow user variables=true;`
+- `server=<yourserver>;username=<yourusername>;password=<yourpassword>;database=<yournameDB>;CharSet=utf8;convert zero datetime=true;allow user variables=true;`
 2. Replace with your data (class SheetToSQL):
-`public static string nameNewTable = "customers10" // Name your mySQL table.;
-string sql = $@"CREATE TABLE `{nameNewTable}` (<your sql-request>)
-string password = "password"; // For AesCrypt.`
+- `public static string nameNewTable = "customers10" // Name your mySQL table.;`
+- `string sql = $@"CREATE TABLE `<nameNewTable>` (<your sql-request>)`
+- `string password = "password"; // For AesCrypt.`
 3. Change formatting way your data for mySQL in method SheetToSQL.ValuesToTable().
 4. Get file 'credentials.json' from [.NET Quickstart](https://developers.google.com/sheets/api/quickstart/dotnet) and save in app root.
 5. Rename your export sheet in Google Spreadsheets as 'final'. Change the range "!A2:P500" (class GoogleSheetsAPI), if necessary.
