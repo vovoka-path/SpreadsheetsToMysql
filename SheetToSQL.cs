@@ -8,7 +8,6 @@ namespace SpreadsheetsToMysql
 {
     class SheetToSQL
     {
-
         public static string nameNewTable = "customers10";
         public static int amountRow = 0;
 
@@ -68,7 +67,6 @@ namespace SpreadsheetsToMysql
             sql = $"SELECT * FROM `{nameNewTable}`";
             command.CommandText = sql;
             adapter.SelectCommand = command;
-            //command.ExecuteNonQuery(); // Execute SQL request.
             adapter.Fill(ds);
             adapter.Fill(emptyTable);
 

@@ -7,7 +7,6 @@ namespace SpreadsheetsToMysql
 {
     class AesCrypt
     {
-
         public static byte[] GetAesKey(string password)
         {
             int needBytesForKey = 32;

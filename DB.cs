@@ -7,7 +7,6 @@ namespace SpreadsheetsToMysql
 {
     class DB
     {
-
         public static MySqlConnection myConnect = new MySqlConnection();
         public static string accessConnectionString;
 
